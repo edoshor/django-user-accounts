@@ -10,8 +10,11 @@ except ImportError:
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
+try:
+    from django.contrib.auth import get_user_model  # Django 1.5
+except ImportError:
+    from account.future_1_5 import get_user_model
 from django.contrib import auth
-from django.contrib.auth.models import User
 
 from account.conf import settings
 from account.models import EmailAddress, SignupCode
@@ -47,6 +50,8 @@ class SignupForm(forms.Form):
     )
 
     def clean_username(self):
+        User = get_user_model()
+
         if not alnum_re.search(self.cleaned_data["username"]):
             raise forms.ValidationError(_("Usernames can only contain letters, numbers and underscores."))
         qs = User.objects.filter(username__iexact=self.cleaned_data["username"])

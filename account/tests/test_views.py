@@ -3,7 +3,11 @@ from django.test import TestCase
 from django.test.client import RequestFactory
 from django.utils import unittest
 
-from django.contrib.auth.models import AnonymousUser, User
+try:
+    from django.contrib.auth import get_user_model  # Django 1.5
+except ImportError:
+    from account.future_1_5 import get_user_model
+from django.contrib.auth.models import AnonymousUser
 
 from account.forms import SignupForm, LoginUsernameForm
 from account.views import SignupView, LoginView
@@ -25,6 +29,7 @@ class SignupViewTestCase(TestCase):
         request.user = AnonymousUser()
         response = SignupEnabledView.as_view()(request)
         self.assertEqual(response.status_code, 200)
+        User = get_user_model()
 
 
 class LoginViewTestCase(TestCase):
