@@ -29,7 +29,6 @@ from account.utils import default_redirect, user_display
 
 
 class SignupView(FormView):
-    User = get_user_model()
 
     template_name = "account/signup.html"
     template_name_ajax = "account/ajax/signup.html"
@@ -148,7 +147,8 @@ class SignupView(FormView):
         return self.redirect_field_name
 
     def create_user(self, form, commit=True, **kwargs):
-        user = self.User(**kwargs)
+        User = get_user_model()
+        user = User(**kwargs)
         username = form.cleaned_data.get("username")
         if username is None:
             username = self.generate_username(form)
@@ -514,9 +514,10 @@ class PasswordResetView(FormView):
         return self.response_class(**response_kwargs)
 
     def send_email(self, email):
+        User = get_user_model()
         protocol = getattr(settings, "DEFAULT_HTTP_PROTOCOL", "http")
         current_site = get_current_site(self.request)
-        for user in self.User.objects.filter(email__iexact=email):
+        for user in User.objects.filter(email__iexact=email):
             uid = int_to_base36(user.id)
             token = self.make_token(user)
             password_reset_url = "{0}://{1}{2}".format(
@@ -605,7 +606,8 @@ class PasswordResetTokenView(FormView):
             uid_int = base36_to_int(self.kwargs["uidb36"])
         except ValueError:
             raise Http404()
-        return get_object_or_404(self.User, id=uid_int)
+        User = get_user_model()
+        return get_object_or_404(User, id=uid_int)
 
     def check_token(self, user, token):
         return self.token_generator.check_token(user, token)
