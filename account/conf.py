@@ -49,6 +49,7 @@ class AccountAppConf(AppConf):
     DELETION_EXPUNGE_CALLBACK = "account.callbacks.account_delete_expunge"
     DELETION_EXPUNGE_HOURS = 48
     HOOKSET = "account.hooks.AccountDefaultHookSet"
+    ACCOUNT_MANUALLY_LOAD_MODEL_SIGNALS = False
     TIMEZONES = list(zip(pytz.all_timezones, pytz.all_timezones))
     LANGUAGES = [
         (code, get_language_info(code).get("name_local"))
