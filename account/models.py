@@ -94,7 +94,7 @@ class Account(models.Model):
 
 
 if not settings.ACCOUNT_MANUALLY_LOAD_MODEL_SIGNALS:
-    @receiver(post_save, sender=Account.User)
+    @receiver(post_save, sender=settings.AUTH_USER_MODEL)
     def user_post_save(sender, **kwargs):
         """
         After User.save is called we check to see if it was a created user. If so,
